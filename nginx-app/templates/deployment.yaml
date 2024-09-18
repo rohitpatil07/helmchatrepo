@@ -51,7 +51,7 @@ spec:
                 </style>
             </head>
             <body>
-                <div>This page is delivered from replica at IP: $MY_POD_IP v2</div>
+                <div>This page is delivered from replica at IP: $MY_POD_IP v3</div>
             </body>
             </html>
             EOF
