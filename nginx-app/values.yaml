@@ -1,0 +1,20 @@
+namespace: myapp
+
+deployment:
+  name: nginx-deployment
+  replicas: 3
+  revisionHistoryLimit: 2
+  changeCause: "Version 1 app deployed"
+  strategy:
+    maxSurge: 1
+    maxUnavailable: 1
+
+nginx:
+  image: nginx
+
+service:
+  name: nginx-service
+  type: LoadBalancer
+  port: 80
+  targetPort: 80
+  nodePort: 30001
