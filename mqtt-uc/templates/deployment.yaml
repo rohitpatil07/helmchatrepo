@@ -1,0 +1,63 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sample-uc-deployment
+  namespace: myapp
+  labels:
+    app: sample-uc
+  annotations:
+    kubernetes.io/change-cause: "Version 1 app deployed"
+spec:
+  selector:
+    matchLabels:
+      app: sample-uc
+  replicas: {{ .Values.replicaCount }}
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: sample-uc
+    spec:
+      containers:
+        - name: mqtt-1
+          image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+          resources:
+            requests:
+              cpu: {{ .Values.resources.requests.cpu }}
+              memory: {{ .Values.resources.requests.memory }}
+            limits:
+              cpu: {{ .Values.resources.limits.cpu }}
+              memory: {{ .Values.resources.limits.memory }}
+          ports:
+            - containerPort: {{ .Values.mqttConfig.mosquitto_1.listener }}
+          env:
+            - name: MQTT_BROKER
+              value: "mqtt://localhost:{{ .Values.mqttConfig.mosquitto_1.listener }}"
+          volumeMounts:
+            - name: mqtt-config
+              mountPath: /mosquitto/config
+          command: ["/usr/sbin/mosquitto", "-c", "/mosquitto/config/mosquitto_1.conf"]
+
+        - name: mqtt-2
+          image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+          resources:
+            requests:
+              cpu: {{ .Values.resources.requests.cpu }}
+              memory: {{ .Values.resources.requests.memory }}
+            limits:
+              cpu: {{ .Values.resources.limits.cpu }}
+              memory: {{ .Values.resources.limits.memory }}
+          ports:
+            - containerPort: {{ .Values.mqttConfig.mosquitto_2.listener }}
+          volumeMounts:
+            - name: mqtt-config
+              mountPath: /mosquitto/config
+          command: ["/usr/sbin/mosquitto", "-c", "/mosquitto/config/mosquitto_2.conf"]
+      volumes:
+        - name: mqtt-config
+          configMap:
+            name: mqtt-redpanda-config

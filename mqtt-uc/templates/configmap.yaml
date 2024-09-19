@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mqtt-redpanda-config
+  namespace: myapp
+data:
+  mosquitto_1.conf: |
+    listener {{ .Values.mqttConfig.mosquitto_1.listener }}
+    allow_anonymous true
+    log_type all
+    connection_messages true
+    connection {{ .Values.mqttConfig.mosquitto_1.connection }}
+    address {{ .Values.mqttConfig.mosquitto_1.address }}
+    topic {{ .Values.mqttConfig.mosquitto_1.topic_out }} out 0
+
+  mosquitto_2.conf: |
+    listener {{ .Values.mqttConfig.mosquitto_2.listener }}
+    allow_anonymous true
+    log_type all
+    connection_messages true
+    connection {{ .Values.mqttConfig.mosquitto_2.connection }}
+    address {{ .Values.mqttConfig.mosquitto_2.address }}
+    topic {{ .Values.mqttConfig.mosquitto_2.topic_in }} in 0
